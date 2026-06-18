@@ -1,0 +1,106 @@
+@use '@/styles/variables.scss' as *;
+
+.uploader {
+  width: 100%;
+}
+
+.title {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-md;
+}
+
+.required {
+  color: $color-error;
+  margin-left: 4rpx;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: $spacing-md;
+}
+
+.photoItem {
+  position: relative;
+  width: 100%;
+  padding-top: 100%;
+  border-radius: $radius-lg;
+  overflow: hidden;
+  background: $color-bg-page;
+}
+
+.photo {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.removeBtn {
+  position: absolute;
+  top: 8rpx;
+  right: 8rpx;
+  width: 44rpx;
+  height: 44rpx;
+  border-radius: $radius-round;
+  background: rgba(0, 0, 0, 0.6);
+  color: $color-text-white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28rpx;
+  line-height: 1;
+  z-index: 2;
+}
+
+.addBtn {
+  position: relative;
+  width: 100%;
+  padding-top: 100%;
+  border-radius: $radius-lg;
+  border: 4rpx dashed $color-border;
+  background: $color-bg-page;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all $transition-base;
+
+  &:active {
+    opacity: 0.8;
+    border-color: $color-primary;
+  }
+}
+
+.addContent {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8rpx;
+}
+
+.addIcon {
+  font-size: 56rpx;
+  color: $color-text-tertiary;
+  font-weight: $font-weight-light;
+  line-height: 1;
+}
+
+.addText {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+}
+
+.hint {
+  margin-top: $spacing-sm;
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+}

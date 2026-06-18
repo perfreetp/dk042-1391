@@ -1,0 +1,255 @@
+@use '@/styles/variables.scss' as *;
+
+.page {
+  min-height: 100vh;
+  background: $color-bg-page;
+  padding: $spacing-lg $page-padding $spacing-xxl;
+}
+
+.section {
+  background: $color-bg-card;
+  border-radius: $radius-xxl;
+  padding: $spacing-xl;
+  box-shadow: $shadow-card;
+  margin-bottom: $spacing-lg;
+}
+
+.headerBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $spacing-xl;
+  gap: $spacing-md;
+  flex-wrap: wrap;
+}
+
+.basicInfo {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.recordId {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+  font-family: 'Courier New', monospace;
+}
+
+.aircraftNo {
+  font-size: $font-size-xxl;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+}
+
+.flightInfo {
+  font-size: $font-size-md;
+  color: $color-text-secondary;
+}
+
+.sectionTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-lg;
+  padding-left: $spacing-sm;
+  border-left: 6rpx solid $color-primary;
+}
+
+.infoGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-lg;
+}
+
+.infoItem {
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.infoItem.full {
+  grid-column: 1 / -1;
+}
+
+.infoLabel {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+}
+
+.infoValue {
+  font-size: $font-size-md;
+  font-weight: $font-weight-medium;
+  color: $color-text-primary;
+  word-break: break-all;
+}
+
+.infoValue.mono {
+  font-family: 'Courier New', monospace;
+  font-size: $font-size-sm;
+  color: $color-primary-dark;
+  background: rgba(30, 86, 160, 0.05);
+  padding: $spacing-xs $spacing-sm;
+  border-radius: $radius-sm;
+  display: inline-block;
+}
+
+.lifeGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-md;
+  margin-bottom: $spacing-md;
+}
+
+.lifeCard {
+  background: $color-bg-page;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+}
+
+.lifeCard.warning {
+  background: $color-warning-light;
+}
+
+.lifeCard.danger {
+  background: $color-error-light;
+}
+
+.lifeValue {
+  font-size: $font-size-xxl;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+  line-height: 1.2;
+}
+
+.lifeCard.warning .lifeValue {
+  color: $color-warning;
+}
+
+.lifeCard.danger .lifeValue {
+  color: $color-error;
+}
+
+.lifeLabel {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}
+
+.lifeRatio {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+}
+
+.restrictions {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.restrictionTag {
+  padding: $spacing-sm $spacing-md;
+  border-radius: $radius-md;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.mel {
+  background: $color-warning-light;
+  color: $color-warning;
+}
+
+.cdl {
+  background: $color-error-light;
+  color: $color-error;
+}
+
+.none {
+  background: $color-success-light;
+  color: $color-success;
+}
+
+.signBox {
+  background: linear-gradient(135deg, rgba(30, 86, 160, 0.05) 0%, rgba(59, 130, 246, 0.05) 100%);
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  border: 2rpx dashed rgba(30, 86, 160, 0.2);
+}
+
+.signRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: $spacing-md;
+  padding-bottom: $spacing-md;
+  border-bottom: 2rpx dashed $color-border;
+
+  &:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+}
+
+.signText {
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+}
+
+.signLabel {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+}
+
+.signValue {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.remarkBox {
+  background: $color-bg-page;
+  border-radius: $radius-md;
+  padding: $spacing-md $spacing-lg;
+}
+
+.remarkText {
+  font-size: $font-size-md;
+  color: $color-text-secondary;
+  line-height: $line-height-loose;
+}
+
+.emptyBox {
+  background: $color-bg-card;
+  border-radius: $radius-xxl;
+  padding: $spacing-xxl;
+  box-shadow: $shadow-card;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-md;
+}
+
+.emptyIcon {
+  font-size: 100rpx;
+  opacity: 0.4;
+}
+
+.emptyTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.emptyDesc {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+  text-align: center;
+}

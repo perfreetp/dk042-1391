@@ -1,0 +1,283 @@
+@use '@/styles/variables.scss' as *;
+
+.page {
+  min-height: 100vh;
+  background: $color-bg-page;
+  padding-bottom: 60rpx;
+}
+
+.header {
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  padding: $spacing-xl $page-padding $spacing-xxl;
+  border-bottom-left-radius: $radius-xxl;
+  border-bottom-right-radius: $radius-xxl;
+}
+
+.profile {
+  display: flex;
+  align-items: center;
+  gap: $spacing-lg;
+  padding: $spacing-md 0;
+}
+
+.avatar {
+  width: 140rpx;
+  height: 140rpx;
+  border-radius: $radius-round;
+  background: rgba(255, 255, 255, 0.25);
+  border: 4rpx solid rgba(255, 255, 255, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 64rpx;
+  color: $color-text-white;
+  font-weight: $font-weight-bold;
+}
+
+.userInfo {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.userName {
+  font-size: $font-size-xxl;
+  font-weight: $font-weight-bold;
+  color: $color-text-white;
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.certIcon {
+  padding: 4rpx 12rpx;
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: $radius-sm;
+  font-size: $font-size-xs;
+  color: $color-text-white;
+  font-weight: $font-weight-medium;
+}
+
+.userMeta {
+  font-size: $font-size-sm;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.userDept {
+  font-size: $font-size-xs;
+  color: rgba(255, 255, 255, 0.75);
+  @include text-ellipsis;
+}
+
+.statsWrap {
+  margin-top: $spacing-lg;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: $radius-xl;
+  padding: $spacing-lg;
+  backdrop-filter: blur(10rpx);
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: $spacing-sm;
+}
+
+.statItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4rpx;
+  padding: $spacing-xs 0;
+}
+
+.statValue {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  color: $color-text-white;
+  line-height: 1.2;
+}
+
+.statLabel {
+  font-size: $font-size-xs;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.content {
+  padding: 0 $page-padding;
+  margin-top: -32rpx;
+}
+
+.workCard {
+  background: $color-bg-card;
+  border-radius: $radius-xxl;
+  padding: $spacing-xl;
+  box-shadow: $shadow-card;
+  margin-bottom: $spacing-lg;
+}
+
+.cardTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-lg;
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.titleIcon {
+  width: 44rpx;
+  height: 44rpx;
+  border-radius: $radius-md;
+  background: rgba(30, 86, 160, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24rpx;
+}
+
+.workSummary {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-md;
+}
+
+.workItem {
+  background: $color-bg-page;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.workValue {
+  font-size: $font-size-xxl;
+  font-weight: $font-weight-bold;
+  color: $color-primary;
+  line-height: 1.2;
+}
+
+.workValue.success {
+  color: $color-success;
+}
+
+.workValue.warning {
+  color: $color-warning;
+}
+
+.workValue.danger {
+  color: $color-error;
+}
+
+.workLabel {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  font-weight: $font-weight-medium;
+}
+
+.workHint {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+}
+
+.menuGroup {
+  background: $color-bg-card;
+  border-radius: $radius-xxl;
+  overflow: hidden;
+  box-shadow: $shadow-card;
+  margin-bottom: $spacing-lg;
+}
+
+.menuGroupTitle {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  color: $color-text-tertiary;
+  padding: $spacing-md $spacing-xl 0;
+}
+
+.menuItem {
+  display: flex;
+  align-items: center;
+  padding: $spacing-lg $spacing-xl;
+  gap: $spacing-md;
+  border-bottom: 2rpx solid $color-divider;
+  transition: all $transition-base;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:active {
+    background: $color-bg-hover;
+  }
+}
+
+.menuIcon {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: $radius-lg;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36rpx;
+  flex-shrink: 0;
+}
+
+.menuIcon.blue {
+  background: rgba(30, 86, 160, 0.1);
+}
+
+.menuIcon.green {
+  background: rgba(22, 163, 74, 0.1);
+}
+
+.menuIcon.orange {
+  background: rgba(245, 158, 11, 0.1);
+}
+
+.menuIcon.red {
+  background: rgba(220, 38, 38, 0.1);
+}
+
+.menuIcon.gray {
+  background: rgba(100, 116, 139, 0.1);
+}
+
+.menuText {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+}
+
+.menuTitle {
+  font-size: $font-size-md;
+  font-weight: $font-weight-medium;
+  color: $color-text-primary;
+}
+
+.menuDesc {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+}
+
+.menuArrow {
+  font-size: $font-size-lg;
+  color: $color-text-tertiary;
+  flex-shrink: 0;
+}
+
+.menuBadge {
+  padding: 4rpx 16rpx;
+  background: $color-error;
+  color: $color-text-white;
+  border-radius: $radius-round;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  flex-shrink: 0;
+}

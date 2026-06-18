@@ -1,0 +1,58 @@
+@use '@/styles/variables.scss' as *;
+
+.button {
+  @include button-reset;
+  width: 100%;
+  height: $button-height-lg;
+  border-radius: $radius-button;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  transition: all $transition-base;
+  border: none;
+
+  &:active {
+    opacity: 0.9;
+    transform: scale(0.98);
+  }
+}
+
+.primary {
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  color: $color-text-white;
+}
+
+.success {
+  background: $color-success;
+  color: $color-text-white;
+}
+
+.warning {
+  background: $color-warning;
+  color: $color-text-white;
+}
+
+.danger {
+  background: $color-error;
+  color: $color-text-white;
+}
+
+.secondary {
+  background: $color-bg-card;
+  color: $color-primary;
+  border: 2rpx solid $color-primary;
+}
+
+.ghost {
+  background: transparent;
+  color: $color-primary;
+  border: 2rpx solid $color-border;
+}
+
+.block {
+  display: flex;
+}
+
+.small {
+  height: $button-height-md;
+  font-size: $font-size-md;
+}
