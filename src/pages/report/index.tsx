@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, Input, Textarea, ScrollView } from '@tarojs/components';
-import Taro from '@tarojs/taro';
+import Taro, { useDidShow } from '@tarojs/taro';
 import classnames from 'classnames';
 import styles from './index.module.scss';
 import { useAppStore } from '@/store/appStore';
@@ -38,6 +38,22 @@ const ReportPage: React.FC = () => {
   const [photos, setPhotos] = useState<string[]>([]);
   const [remark, setRemark] = useState('');
   const [submitting, setSubmitting] = useState(false);
+
+  useDidShow(() => {
+    const prefill = useAppStore.getState().pendingReportPrefill;
+    if (prefill) {
+      setReportType(prefill.reportType);
+      setSerialNumber(prefill.serialNumber || '');
+      setAircraftNo(prefill.aircraftNo || '');
+      setFlightNo(prefill.flightNo || '');
+      setParkingPosition(prefill.parkingPosition || '');
+      setPartName(prefill.partName || '');
+      useAppStore.getState().clearPendingReportPrefill();
+      console.log('[Report] prefill from verify:', prefill.reportType);
+      Taro.showToast({ title: '已带入核验信息，请补充照片', icon: 'none', duration: 1500 });
+      Taro.pageScrollTo({ scrollTop: 0, duration: 200 });
+    }
+  });
 
   const canSubmit = (): boolean => {
     return (

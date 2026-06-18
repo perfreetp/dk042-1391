@@ -1,6 +1,45 @@
 import { create } from 'zustand';
-import type { UserInfo, VerifyRecord, ReportRecord, DailyStats, PartInfo } from '@/types';
+import Taro from '@tarojs/taro';
+import type {
+  UserInfo,
+  VerifyRecord,
+  ReportRecord,
+  DailyStats,
+  PartInfo,
+  PendingVerifyTask,
+  PendingReportPrefill
+} from '@/types';
 import { mockVerifyRecords, mockReportRecords, mockDailyStats, mockCurrentUser, mockParts } from '@/data/mockData';
+
+const STORAGE_KEY = 'aml_verify_store_v1';
+
+interface PersistedState {
+  verifyRecords: VerifyRecord[];
+  reportRecords: ReportRecord[];
+  dailyStats: DailyStats;
+}
+
+const loadPersisted = (): Partial<PersistedState> => {
+  try {
+    const raw = Taro.getStorageSync(STORAGE_KEY);
+    if (!raw) return {};
+    const parsed = typeof raw === 'string' ? JSON.parse(raw) : raw;
+    return parsed || {};
+  } catch (e) {
+    console.warn('[Store] loadPersisted failed:', e);
+    return {};
+  }
+};
+
+const persistState = (state: PersistedState) => {
+  try {
+    Taro.setStorageSync(STORAGE_KEY, JSON.stringify(state));
+  } catch (e) {
+    console.warn('[Store] persistState failed:', e);
+  }
+};
+
+const persisted = loadPersisted();
 
 interface AppState {
   currentUser: UserInfo;
@@ -9,20 +48,29 @@ interface AppState {
   reportRecords: ReportRecord[];
   parts: PartInfo[];
   pendingVerifyCount: number;
+  pendingVerifyTask: PendingVerifyTask | null;
+  pendingReportPrefill: PendingReportPrefill | null;
   setCurrentUser: (user: UserInfo) => void;
   addVerifyRecord: (record: VerifyRecord) => void;
   addReportRecord: (record: ReportRecord) => void;
   queryPartBySerial: (serial: string) => PartInfo | undefined;
   refreshStats: () => void;
+  setPendingVerifyTask: (task: PendingVerifyTask | null) => void;
+  clearPendingVerifyTask: () => void;
+  setPendingReportPrefill: (prefill: PendingReportPrefill | null) => void;
+  clearPendingReportPrefill: () => void;
+  clearAllRecords: () => void;
 }
 
 export const useAppStore = create<AppState>((set, get) => ({
   currentUser: mockCurrentUser,
-  dailyStats: mockDailyStats,
-  verifyRecords: mockVerifyRecords,
-  reportRecords: mockReportRecords,
+  dailyStats: persisted.dailyStats || mockDailyStats,
+  verifyRecords: persisted.verifyRecords || mockVerifyRecords,
+  reportRecords: persisted.reportRecords || mockReportRecords,
   parts: mockParts,
   pendingVerifyCount: 3,
+  pendingVerifyTask: null,
+  pendingReportPrefill: null,
 
   setCurrentUser: (user) => set({ currentUser: user }),
 
@@ -36,8 +84,10 @@ export const useAppStore = create<AppState>((set, get) => ({
       reviewCount: record.status === 'review' ? dailyStats.reviewCount + 1 : dailyStats.reviewCount,
       rejectCount: record.status === 'reject' ? dailyStats.rejectCount + 1 : dailyStats.rejectCount
     };
-    set({
+    set({ verifyRecords: newRecords, dailyStats: newStats });
+    persistState({
       verifyRecords: newRecords,
+      reportRecords: get().reportRecords,
       dailyStats: newStats
     });
     console.log('[Store] addVerifyRecord:', record.id, 'status:', record.status);
@@ -50,7 +100,9 @@ export const useAppStore = create<AppState>((set, get) => ({
       ...dailyStats,
       reportCount: dailyStats.reportCount + 1
     };
-    set({
+    set({ reportRecords: newRecords, dailyStats: newStats });
+    persistState({
+      verifyRecords: get().verifyRecords,
       reportRecords: newRecords,
       dailyStats: newStats
     });
@@ -74,5 +126,28 @@ export const useAppStore = create<AppState>((set, get) => ({
       reportCount: reportRecords.length
     };
     set({ dailyStats: stats });
+    persistState({
+      verifyRecords: get().verifyRecords,
+      reportRecords: get().reportRecords,
+      dailyStats: stats
+    });
+  },
+
+  setPendingVerifyTask: (task) => set({ pendingVerifyTask: task }),
+  clearPendingVerifyTask: () => set({ pendingVerifyTask: null }),
+  setPendingReportPrefill: (prefill) => set({ pendingReportPrefill: prefill }),
+  clearPendingReportPrefill: () => set({ pendingReportPrefill: null }),
+
+  clearAllRecords: () => {
+    const emptyStats: DailyStats = {
+      totalVerify: 0,
+      passCount: 0,
+      reviewCount: 0,
+      rejectCount: 0,
+      reportCount: 0
+    };
+    set({ verifyRecords: [], reportRecords: [], dailyStats: emptyStats });
+    persistState({ verifyRecords: [], reportRecords: [], dailyStats: emptyStats });
+    console.log('[Store] clearAllRecords done');
   }
 }));

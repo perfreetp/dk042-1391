@@ -25,7 +25,7 @@ const MinePage: React.FC = () => {
         iconClass: 'blue',
         title: '核验记录',
         desc: `${verifyRecords.length}条核验档案，可筛选查询`,
-        onClick: () => handleMenuClick('verify_history', '核验记录')
+        onClick: () => Taro.navigateTo({ url: '/pages/history/index?tab=all' })
       },
       {
         key: 'report_history',
@@ -34,7 +34,7 @@ const MinePage: React.FC = () => {
         title: '上报记录',
         desc: `${reportRecords.length}条异常，跟踪处理进度`,
         badge: reportRecords.filter(r => r.status === 'pending').length,
-        onClick: () => handleMenuClick('report_history', '上报记录')
+        onClick: () => Taro.navigateTo({ url: '/pages/history/index?tab=report' })
       },
       {
         key: 'signature',

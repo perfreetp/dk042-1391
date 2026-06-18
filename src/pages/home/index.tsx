@@ -45,7 +45,7 @@ const todoList = [
 ];
 
 const HomePage: React.FC = () => {
-  const { currentUser, dailyStats, verifyRecords, pendingVerifyCount } = useAppStore();
+  const { currentUser, dailyStats, verifyRecords, pendingVerifyCount, setPendingVerifyTask } = useAppStore();
   const [refreshing, setRefreshing] = useState(false);
 
   const handleRefresh = () => {
@@ -57,15 +57,20 @@ const HomePage: React.FC = () => {
     }, 800);
   };
 
-  const goVerify = (serial?: string) => {
-    Taro.switchTab({
-      url: '/pages/verify/index',
-      success: () => {
-        if (serial) {
-          console.log('[Home] passing serial to verify:', serial);
-        }
-      }
-    });
+  const goVerify = (todo?: typeof todoList[0]) => {
+    if (todo) {
+      setPendingVerifyTask({
+        serialNumber: todo.serialNumber,
+        aircraftNo: todo.aircraftNo,
+        flightNo: todo.flightNo,
+        position: todo.position,
+        parkingPosition: todo.parking,
+        partName: todo.partName,
+        source: 'todo'
+      });
+      console.log('[Home] set pending verify task:', todo.aircraftNo, todo.position);
+    }
+    Taro.switchTab({ url: '/pages/verify/index' });
   };
 
   const goReport = () => {
@@ -76,6 +81,10 @@ const HomePage: React.FC = () => {
     Taro.navigateTo({
       url: `/pages/verify-detail/index?id=${record.id}`
     });
+  };
+
+  const goHistory = () => {
+    Taro.navigateTo({ url: '/pages/history/index' });
   };
 
   const recentHistory = verifyRecords.slice(0, 4);
@@ -146,7 +155,7 @@ const HomePage: React.FC = () => {
                 <View
                   key={todo.id}
                   className={styles.todoCard}
-                  onClick={() => goVerify(todo.serialNumber)}
+                  onClick={() => goVerify(todo)}
                 >
                   <View className={styles.todoHeader}>
                     <View className={styles.aircraftInfo}>
@@ -180,7 +189,7 @@ const HomePage: React.FC = () => {
         <View className={styles.section}>
           <View className={styles.sectionHeader}>
             <Text className={styles.sectionTitle}>最近核验记录</Text>
-            <Text className={styles.sectionMore}>
+            <Text className={styles.sectionMore} onClick={goHistory}>
               共{verifyRecords.length}条 ›
             </Text>
           </View>

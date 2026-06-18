@@ -41,6 +41,7 @@ export interface VerifyRecord {
   verifiedBy: string;
   verifiedAt: string;
   flightNo?: string;
+  parkingPosition?: string;
   remark?: string;
   remainingHours: number;
   remainingCycles: number;
@@ -85,4 +86,23 @@ export interface DailyStats {
   reviewCount: number;
   rejectCount: number;
   reportCount: number;
+}
+
+export interface PendingVerifyTask {
+  serialNumber: string;
+  aircraftNo: string;
+  flightNo?: string;
+  position: string;
+  parkingPosition?: string;
+  partName?: string;
+  source: 'todo';
+}
+
+export interface PendingReportPrefill {
+  reportType: ReportType;
+  serialNumber?: string;
+  aircraftNo?: string;
+  flightNo?: string;
+  parkingPosition?: string;
+  partName?: string;
 }

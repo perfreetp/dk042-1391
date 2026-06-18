@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { View, Text, Input, Button } from '@tarojs/components';
-import Taro from '@tarojs/taro';
+import Taro, { useDidShow } from '@tarojs/taro';
+import classnames from 'classnames';
 import styles from './index.module.scss';
 import { useAppStore } from '@/store/appStore';
 import LargeButton from '@/components/LargeButton';
@@ -39,17 +40,52 @@ const calcVerifyStatus = (part: {
 };
 
 const VerifyPage: React.FC = () => {
-  const { currentUser, queryPartBySerial, addVerifyRecord } = useAppStore();
+  const { currentUser, queryPartBySerial, addVerifyRecord, setPendingReportPrefill } = useAppStore();
+
   const [serialNumber, setSerialNumber] = useState('');
   const [aircraftNo, setAircraftNo] = useState('');
   const [position, setPosition] = useState('');
   const [flightNo, setFlightNo] = useState('');
+  const [parkingPosition, setParkingPosition] = useState('');
+  const [positionConfirmed, setPositionConfirmed] = useState(false);
+  const [fromTodo, setFromTodo] = useState(false);
   const [result, setResult] = useState<VerifyResultData | null>(null);
   const [verifying, setVerifying] = useState(false);
 
+  useDidShow(() => {
+    const task = useAppStore.getState().pendingVerifyTask;
+    if (task) {
+      setSerialNumber(task.serialNumber);
+      setAircraftNo(task.aircraftNo);
+      setFlightNo(task.flightNo || '');
+      setPosition(task.position);
+      setParkingPosition(task.parkingPosition || '');
+      setPositionConfirmed(false);
+      setFromTodo(true);
+      setResult(null);
+      useAppStore.getState().clearPendingVerifyTask();
+      console.log('[Verify] prefill from todo:', task.aircraftNo, task.position);
+    }
+  });
+
   const canVerify = useMemo(() => {
-    return serialNumber.trim().length >= 6 && aircraftNo.trim().length >= 4 && position.trim().length >= 2;
-  }, [serialNumber, aircraftNo, position]);
+    return (
+      serialNumber.trim().length >= 6 &&
+      aircraftNo.trim().length >= 4 &&
+      position.trim().length >= 2 &&
+      positionConfirmed
+    );
+  }, [serialNumber, aircraftNo, position, positionConfirmed]);
+
+  const handleAircraftChange = (val: string) => {
+    setAircraftNo(val);
+    if (positionConfirmed) setPositionConfirmed(false);
+  };
+
+  const handlePositionChange = (val: string) => {
+    setPosition(val);
+    if (positionConfirmed) setPositionConfirmed(false);
+  };
 
   const handleScan = async () => {
     try {
@@ -68,7 +104,7 @@ const VerifyPage: React.FC = () => {
 
   const handleVerify = async () => {
     if (!canVerify) {
-      Taro.showToast({ title: '请填写完整信息', icon: 'none' });
+      Taro.showToast({ title: positionConfirmed ? '请填写完整信息' : '请先勾选确认装机位置', icon: 'none' });
       return;
     }
 
@@ -88,6 +124,13 @@ const VerifyPage: React.FC = () => {
           cancelText: '重新输入',
           success: (res) => {
             if (res.confirm) {
+              setPendingReportPrefill({
+                reportType: 'no_record',
+                serialNumber: serial,
+                aircraftNo: aircraftNo.trim().toUpperCase(),
+                flightNo: flightNo.trim().toUpperCase() || undefined,
+                parkingPosition: parkingPosition.trim().toUpperCase() || undefined
+              });
               Taro.switchTab({ url: '/pages/report/index' });
             }
           }
@@ -145,6 +188,7 @@ const VerifyPage: React.FC = () => {
             verifiedBy: currentUser.name,
             verifiedAt: dayjs().format('YYYY-MM-DD HH:mm'),
             flightNo: flightNo.trim().toUpperCase() || undefined,
+            parkingPosition: parkingPosition.trim().toUpperCase() || undefined,
             remainingHours: result.remainingHours,
             remainingCycles: result.remainingCycles,
             hasMELRestriction: result.hasMELRestriction,
@@ -168,8 +212,12 @@ const VerifyPage: React.FC = () => {
           setTimeout(() => {
             setResult(null);
             setSerialNumber('');
+            setAircraftNo('');
             setPosition('');
             setFlightNo('');
+            setParkingPosition('');
+            setPositionConfirmed(false);
+            setFromTodo(false);
           }, 1200);
         }
       }
@@ -177,11 +225,33 @@ const VerifyPage: React.FC = () => {
   };
 
   const handleReport = () => {
+    if (result) {
+      setPendingReportPrefill({
+        reportType: 'serial_mismatch',
+        serialNumber: result.serialNumber,
+        partName: result.partName,
+        aircraftNo: aircraftNo.trim().toUpperCase(),
+        flightNo: flightNo.trim().toUpperCase() || undefined,
+        parkingPosition: parkingPosition.trim().toUpperCase() || undefined
+      });
+    }
     Taro.switchTab({ url: '/pages/report/index' });
   };
 
   return (
     <View className={styles.page}>
+      {fromTodo && (
+        <View className={styles.fromTodoBanner}>
+          <Text className={styles.todoIcon}>📌</Text>
+          <View className={styles.todoText}>
+            <Text className={styles.todoTitle}>来自待办任务，请现场核对后继续</Text>
+            <Text className={styles.todoDesc}>
+              {aircraftNo} · {position} · {flightNo || '未录航班'}
+            </Text>
+          </View>
+        </View>
+      )}
+
       <View className={styles.section}>
         <Text className={styles.sectionTitle}>
           <Text className={styles.titleIcon}>📋</Text>
@@ -245,7 +315,7 @@ const VerifyPage: React.FC = () => {
               placeholder="例如 B-8965"
               placeholderStyle="color:#94A3B8"
               value={aircraftNo}
-              onInput={(e) => setAircraftNo(e.detail.value)}
+              onInput={(e) => handleAircraftChange(e.detail.value)}
             />
           </View>
           <Text className={styles.inputHint}>机身尾部喷涂的注册号，B-开头</Text>
@@ -262,10 +332,25 @@ const VerifyPage: React.FC = () => {
               placeholder="例如 主起落架左 / 左发核心机"
               placeholderStyle="color:#94A3B8"
               value={position}
-              onInput={(e) => setPosition(e.detail.value)}
+              onInput={(e) => handlePositionChange(e.detail.value)}
             />
           </View>
           <Text className={styles.inputHint}>必须与实际装机位置一致，避免错装</Text>
+        </View>
+
+        <View className={styles.formRow}>
+          <Text className={styles.formLabel}>停场机位（选填）</Text>
+          <View className={styles.inputWrap}>
+            <Input
+              className={styles.input}
+              type="text"
+              placeholder="例如 A08 / B15 廊桥号"
+              placeholderStyle="color:#94A3B8"
+              value={parkingPosition}
+              onInput={(e) => setParkingPosition(e.detail.value)}
+            />
+          </View>
+          <Text className={styles.inputHint}>用于异常上报时定位飞机停场位置</Text>
         </View>
 
         <View className={styles.formRow}>
@@ -282,9 +367,11 @@ const VerifyPage: React.FC = () => {
           </View>
         </View>
 
-        {canVerify && (
-          <View className={styles.confirmCard}>
-            <Text className={styles.confirmTitle}>⚠ 请仔细核对以下信息</Text>
+        {aircraftNo.trim().length >= 4 && position.trim().length >= 2 && (
+          <View className={classnames(styles.confirmCard, positionConfirmed && styles.confirmCardDone)}>
+            <Text className={styles.confirmTitle}>
+              {positionConfirmed ? '✓ 已确认装机位置' : '⚠ 请现场核对以下信息'}
+            </Text>
             <View className={styles.confirmGrid}>
               <View className={styles.confirmItem}>
                 <Text className={styles.confirmLabel}>飞机号</Text>
@@ -295,12 +382,25 @@ const VerifyPage: React.FC = () => {
                 <Text className={styles.confirmValue}>{position}</Text>
               </View>
             </View>
+            <View
+              className={classnames(styles.confirmCheck, positionConfirmed && styles.confirmCheckDone)}
+              onClick={() => setPositionConfirmed(!positionConfirmed)}
+            >
+              <View className={classnames(styles.checkBox, positionConfirmed && styles.checked)}>
+                {positionConfirmed && <Text className={styles.checkIcon}>✓</Text>}
+              </View>
+              <Text className={styles.checkText}>
+                {positionConfirmed
+                  ? '已现场核对，飞机号与装机位置一致'
+                  : '我已现场核对，飞机号与装机位置一致'}
+              </Text>
+            </View>
           </View>
         )}
 
         <LargeButton
-          text={verifying ? '核验查询中...' : '开始核验寿命状态'}
-          type="primary"
+          text={verifying ? '核验查询中...' : (positionConfirmed ? '开始核验寿命状态' : '请先勾选确认装机位置')}
+          type={positionConfirmed ? 'primary' : 'secondary'}
           disabled={!canVerify || verifying}
           onClick={handleVerify}
         />

@@ -5,7 +5,8 @@ export default defineAppConfig({
     'pages/report/index',
     'pages/mine/index',
     'pages/verify-detail/index',
-    'pages/report-detail/index'
+    'pages/report-detail/index',
+    'pages/history/index'
   ],
   window: {
     backgroundTextStyle: 'light',
