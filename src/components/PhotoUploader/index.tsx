@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, Image } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import styles from './index.module.scss';
+import { tempPathToBase64 } from '@/utils/image';
 
 interface PhotoUploaderProps {
   title?: string;
@@ -33,7 +34,12 @@ const PhotoUploader: React.FC<PhotoUploaderProps> = ({
       });
 
       console.log('[PhotoUploader] chooseImage:', res.tempFilePaths.length, 'files');
-      onChange([...photos, ...res.tempFilePaths]);
+      Taro.showLoading({ title: '处理图片中...', mask: true });
+      const base64List = await Promise.all(
+        res.tempFilePaths.map(p => tempPathToBase64(p).catch(() => p))
+      );
+      Taro.hideLoading();
+      onChange([...photos, ...base64List]);
     } catch (error) {
       console.error('[PhotoUploader] chooseImage error:', error);
     }

@@ -20,8 +20,16 @@ const MinePage: React.FC = () => {
   const menuList = [
     [
       {
-        key: 'verify_history',
+        key: 'shift_summary',
         icon: '📋',
+        iconClass: 'blue',
+        title: '交班汇总',
+        desc: '按飞机号聚合今日核验与异常处理进度',
+        onClick: () => Taro.navigateTo({ url: '/pages/shift-summary/index' })
+      },
+      {
+        key: 'verify_history',
+        icon: '📦',
         iconClass: 'blue',
         title: '核验记录',
         desc: `${verifyRecords.length}条核验档案，可筛选查询`,

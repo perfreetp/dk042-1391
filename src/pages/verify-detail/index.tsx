@@ -59,6 +59,7 @@ const VerifyDetailPage: React.FC = () => {
             <Text className={styles.aircraftNo}>{record.aircraftNo}</Text>
             <Text className={styles.flightInfo}>
               {record.flightNo || '未录入航班号'} · 装机位置: {record.position}
+              {record.parkingPosition ? ` · 机位 ${record.parkingPosition}` : ''}
             </Text>
           </View>
           <StatusBadge status={record.status} text={record.statusText} />

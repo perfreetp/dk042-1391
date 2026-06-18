@@ -52,6 +52,17 @@ const VerifyPage: React.FC = () => {
   const [result, setResult] = useState<VerifyResultData | null>(null);
   const [verifying, setVerifying] = useState(false);
 
+  const resetForm = () => {
+    setSerialNumber('');
+    setAircraftNo('');
+    setPosition('');
+    setFlightNo('');
+    setParkingPosition('');
+    setPositionConfirmed(false);
+    setFromTodo(false);
+    setResult(null);
+  };
+
   useDidShow(() => {
     const task = useAppStore.getState().pendingVerifyTask;
     if (task) {
@@ -65,6 +76,8 @@ const VerifyPage: React.FC = () => {
       setResult(null);
       useAppStore.getState().clearPendingVerifyTask();
       console.log('[Verify] prefill from todo:', task.aircraftNo, task.position);
+    } else {
+      resetForm();
     }
   });
 
@@ -77,14 +90,24 @@ const VerifyPage: React.FC = () => {
     );
   }, [serialNumber, aircraftNo, position, positionConfirmed]);
 
+  const invalidateResult = () => {
+    if (result) setResult(null);
+    if (positionConfirmed) setPositionConfirmed(false);
+  };
+
+  const handleSerialChange = (val: string) => {
+    setSerialNumber(val);
+    invalidateResult();
+  };
+
   const handleAircraftChange = (val: string) => {
     setAircraftNo(val);
-    if (positionConfirmed) setPositionConfirmed(false);
+    invalidateResult();
   };
 
   const handlePositionChange = (val: string) => {
     setPosition(val);
-    if (positionConfirmed) setPositionConfirmed(false);
+    invalidateResult();
   };
 
   const handleScan = async () => {
@@ -95,6 +118,7 @@ const VerifyPage: React.FC = () => {
       });
       console.log('[Verify] scanCode result:', res.result);
       setSerialNumber(res.result);
+      invalidateResult();
       Taro.showToast({ title: '识别成功', icon: 'success', duration: 1000 });
     } catch (error) {
       console.error('[Verify] scanCode error:', error);
@@ -206,18 +230,11 @@ const VerifyPage: React.FC = () => {
           Taro.showToast({
             title: result.status === 'reject' ? '已记录并通知MCC' : '签署成功',
             icon: 'success',
-            duration: 1500
+            duration: 1200
           });
 
           setTimeout(() => {
-            setResult(null);
-            setSerialNumber('');
-            setAircraftNo('');
-            setPosition('');
-            setFlightNo('');
-            setParkingPosition('');
-            setPositionConfirmed(false);
-            setFromTodo(false);
+            Taro.switchTab({ url: '/pages/home/index' });
           }, 1200);
         }
       }
@@ -272,7 +289,7 @@ const VerifyPage: React.FC = () => {
               <Text
                 key={s}
                 className={styles.quickTag}
-                onClick={() => setSerialNumber(s)}
+                onClick={() => { setSerialNumber(s); invalidateResult(); }}
               >
                 {s}
               </Text>
@@ -291,7 +308,7 @@ const VerifyPage: React.FC = () => {
               placeholder="输入或扫描 SN 开头的序列号"
               placeholderStyle="color:#94A3B8"
               value={serialNumber}
-              onInput={(e) => setSerialNumber(e.detail.value)}
+              onInput={(e) => handleSerialChange(e.detail.value)}
             />
           </View>
           <Text className={styles.inputHint}>输入完整序列号，例如 SN202400012345</Text>

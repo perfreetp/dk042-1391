@@ -1,0 +1,275 @@
+@use '@/styles/variables.scss' as *;
+
+.page {
+  min-height: 100vh;
+  background: $color-bg-page;
+  padding-bottom: $spacing-xxl;
+}
+
+.summaryHeader {
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  padding: $spacing-lg $page-padding $spacing-xl;
+  border-bottom-left-radius: $radius-xxl;
+  border-bottom-right-radius: $radius-xxl;
+}
+
+.summaryTitle {
+  font-size: $font-size-md;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: $spacing-md;
+}
+
+.summaryGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: $spacing-sm;
+}
+
+.summaryCell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4rpx;
+}
+
+.summaryValue {
+  font-size: $font-size-xxl;
+  font-weight: $font-weight-bold;
+  color: $color-text-white;
+}
+
+.summaryLabel {
+  font-size: $font-size-xs;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.filterBar {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-md $page-padding;
+}
+
+.searchWrap {
+  flex: 1;
+  height: $input-height-lg;
+  background: $color-bg-card;
+  border-radius: $radius-round;
+  padding: 0 $spacing-lg;
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  box-shadow: $shadow-card;
+}
+
+.searchIcon {
+  font-size: 32rpx;
+  opacity: 0.6;
+}
+
+.searchInput {
+  flex: 1;
+  height: 100%;
+  font-size: $font-size-md;
+  color: $color-text-primary;
+}
+
+.rangeToggle {
+  display: flex;
+  background: $color-bg-card;
+  border-radius: $radius-round;
+  padding: 4rpx;
+  margin: 0 $page-padding $spacing-md;
+  box-shadow: $shadow-card;
+}
+
+.rangeBtn {
+  flex: 1;
+  text-align: center;
+  padding: $spacing-sm 0;
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  border-radius: $radius-round;
+  font-weight: $font-weight-medium;
+  transition: all $transition-base;
+}
+
+.rangeBtnActive {
+  background: $color-primary;
+  color: $color-text-white;
+  font-weight: $font-weight-bold;
+}
+
+.sectionTip {
+  padding: 0 $page-padding $spacing-sm;
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+}
+
+.groupList {
+  padding: 0 $page-padding;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.groupCard {
+  background: $color-bg-card;
+  border-radius: $radius-xl;
+  box-shadow: $shadow-card;
+  overflow: hidden;
+}
+
+.groupHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $spacing-lg;
+  border-bottom: 2rpx solid $color-divider;
+}
+
+.groupLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+  flex: 1;
+  min-width: 0;
+}
+
+.groupAircraft {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+}
+
+.groupMeta {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  display: flex;
+  gap: $spacing-sm;
+  flex-wrap: wrap;
+}
+
+.groupCounts {
+  display: flex;
+  gap: $spacing-sm;
+  align-items: center;
+}
+
+.countChip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 4rpx 16rpx;
+  border-radius: $radius-sm;
+  min-width: 56rpx;
+}
+
+.countNum {
+  font-size: $font-size-md;
+  font-weight: $font-weight-bold;
+}
+
+.countTxt {
+  font-size: 20rpx;
+}
+
+.countChip.verify {
+  background: rgba(30, 86, 160, 0.1);
+  .countNum, .countTxt { color: $color-primary; }
+}
+
+.countChip.report {
+  background: rgba(234, 88, 12, 0.1);
+  .countNum, .countTxt { color: #EA580C; }
+}
+
+.countChip.pending {
+  background: rgba(245, 158, 11, 0.12);
+  .countNum, .countTxt { color: $color-warning; }
+}
+
+.expandIcon {
+  font-size: 32rpx;
+  color: $color-text-tertiary;
+  margin-left: $spacing-sm;
+}
+
+.recordList {
+  padding: 0 $spacing-lg $spacing-lg;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.recordRow {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  padding: $spacing-md;
+  background: $color-bg-page;
+  border-radius: $radius-lg;
+  border-left: 6rpx solid $color-border;
+}
+
+.recordRow.pass { border-left-color: $color-success; }
+.recordRow.review { border-left-color: $color-warning; }
+.recordRow.reject { border-left-color: $color-error; }
+.recordRow.report { border-left-color: #EA580C; }
+
+.recordBody {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+}
+
+.recordTitle {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.recordSub {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+}
+
+.recordTime {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  flex-shrink: 0;
+}
+
+.emptyBox {
+  margin: $spacing-xxl $page-padding;
+  background: $color-bg-card;
+  border-radius: $radius-xl;
+  padding: $spacing-xxl $spacing-lg;
+  box-shadow: $shadow-card;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-md;
+}
+
+.emptyIcon {
+  font-size: 80rpx;
+  opacity: 0.5;
+}
+
+.emptyTitle {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.emptyDesc {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+  text-align: center;
+}

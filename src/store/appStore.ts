@@ -10,6 +10,8 @@ import type {
   PendingReportPrefill
 } from '@/types';
 import { mockVerifyRecords, mockReportRecords, mockDailyStats, mockCurrentUser, mockParts } from '@/data/mockData';
+import { getStatusText } from '@/utils/format';
+import dayjs from 'dayjs';
 
 const STORAGE_KEY = 'aml_verify_store_v1';
 
@@ -59,6 +61,7 @@ interface AppState {
   clearPendingVerifyTask: () => void;
   setPendingReportPrefill: (prefill: PendingReportPrefill | null) => void;
   clearPendingReportPrefill: () => void;
+  updateReportStatus: (id: string, status: ReportRecord['status'], handler: string, handleRemark: string) => void;
   clearAllRecords: () => void;
 }
 
@@ -137,6 +140,31 @@ export const useAppStore = create<AppState>((set, get) => ({
   clearPendingVerifyTask: () => set({ pendingVerifyTask: null }),
   setPendingReportPrefill: (prefill) => set({ pendingReportPrefill: prefill }),
   clearPendingReportPrefill: () => set({ pendingReportPrefill: null }),
+
+  updateReportStatus: (id, status, handler, handleRemark) => {
+    const { reportRecords } = get();
+    const newRecords = reportRecords.map(r => {
+      if (r.id !== id) return r;
+      return {
+        ...r,
+        status,
+        statusText: getStatusText(status),
+        handler: handler || r.handler || 'MCC调度',
+        handleRemark: handleRemark || r.handleRemark,
+        handledAt: dayjs().format('YYYY-MM-DD HH:mm'),
+        remark: r.remark
+          ? `${r.remark}\n[${dayjs().format('MM-DD HH:mm')} ${handler}] ${handleRemark}`
+          : `[${dayjs().format('MM-DD HH:mm')} ${handler}] ${handleRemark}`
+      } as ReportRecord;
+    });
+    set({ reportRecords: newRecords });
+    persistState({
+      verifyRecords: get().verifyRecords,
+      reportRecords: newRecords,
+      dailyStats: get().dailyStats
+    });
+    console.log('[Store] updateReportStatus:', id, '->', status);
+  },
 
   clearAllRecords: () => {
     const emptyStats: DailyStats = {

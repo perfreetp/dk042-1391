@@ -258,3 +258,180 @@
   color: $color-text-tertiary;
   text-align: center;
 }
+
+.timelineHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $spacing-lg;
+}
+
+.feedbackBtn {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  padding: 8rpx 20rpx;
+  background: rgba(234, 88, 12, 0.1);
+  border-radius: $radius-round;
+  transition: all $transition-base;
+
+  &:active {
+    transform: scale(0.96);
+    opacity: 0.9;
+  }
+}
+
+.feedbackIcon {
+  font-size: 28rpx;
+  color: #EA580C;
+}
+
+.feedbackText {
+  font-size: $font-size-sm;
+  color: #EA580C;
+  font-weight: $font-weight-semibold;
+}
+
+.modalMask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(15, 23, 42, 0.55);
+  z-index: 1000;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.modalBody {
+  width: 100%;
+  background: $color-bg-card;
+  border-radius: $radius-xxl $radius-xxl 0 0;
+  padding: $spacing-xl $page-padding calc(40rpx + env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+  animation: slideUp $transition-base ease;
+  max-height: 88vh;
+  overflow-y: auto;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+.modalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $spacing-sm;
+}
+
+.modalTitle {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+}
+
+.modalClose {
+  font-size: 48rpx;
+  color: $color-text-tertiary;
+  width: 64rpx;
+  height: 64rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.modalLabel {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-top: $spacing-sm;
+}
+
+.statusOptions {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+  margin-top: $spacing-xs;
+}
+
+.statusOption {
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+  padding: $spacing-md $spacing-lg;
+  background: $color-bg-page;
+  border-radius: $radius-lg;
+  border: 3rpx solid transparent;
+  transition: all $transition-base;
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+.statusOptionActive {
+  border-color: #EA580C;
+  background: rgba(234, 88, 12, 0.06);
+}
+
+.statusOptionActive.s_processing {
+  border-color: $color-warning;
+  background: rgba(245, 158, 11, 0.08);
+}
+
+.statusOptionActive.s_resolved {
+  border-color: $color-success;
+  background: rgba(22, 163, 74, 0.08);
+}
+
+.statusOptionActive.s_closed {
+  border-color: $color-text-tertiary;
+  background: rgba(100, 116, 139, 0.08);
+}
+
+.statusOptionLabel {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.statusOptionDesc {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+}
+
+.modalInputWrap {
+  background: $color-bg-page;
+  border-radius: $radius-lg;
+  padding: $spacing-md $spacing-lg;
+  margin-top: $spacing-xs;
+}
+
+.modalInput {
+  width: 100%;
+  font-size: $font-size-md;
+  color: $color-text-primary;
+  min-height: 48rpx;
+}
+
+.modalTextareaWrap {
+  background: $color-bg-page;
+  border-radius: $radius-lg;
+  padding: $spacing-md $spacing-lg;
+  margin-top: $spacing-xs;
+}
+
+.modalTextarea {
+  width: 100%;
+  min-height: 160rpx;
+  font-size: $font-size-md;
+  color: $color-text-primary;
+  line-height: $line-height-loose;
+}

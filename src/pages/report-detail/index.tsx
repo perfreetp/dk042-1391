@@ -1,5 +1,5 @@
-import React, { useMemo } from 'react';
-import { View, Text, Image } from '@tarojs/components';
+import React, { useMemo, useState } from 'react';
+import { View, Text, Image, Textarea } from '@tarojs/components';
 import Taro, { useRouter } from '@tarojs/taro';
 import classnames from 'classnames';
 import styles from './index.module.scss';
@@ -7,10 +7,21 @@ import { useAppStore } from '@/store/appStore';
 import StatusBadge from '@/components/StatusBadge';
 import LargeButton from '@/components/LargeButton';
 import { formatDateTime } from '@/utils/format';
+import type { ReportStatus } from '@/types';
+
+const STATUS_OPTIONS: { key: ReportStatus; label: string; desc: string }[] = [
+  { key: 'processing', label: '处理中', desc: '已接单，正在协调' },
+  { key: 'resolved', label: '已解决', desc: '问题已处置完成' },
+  { key: 'closed', label: '已关闭', desc: '归档关闭' }
+];
 
 const ReportDetailPage: React.FC = () => {
   const router = useRouter();
-  const { reportRecords } = useAppStore();
+  const { reportRecords, currentUser, updateReportStatus } = useAppStore();
+  const [modalOpen, setModalOpen] = useState(false);
+  const [pickStatus, setPickStatus] = useState<ReportStatus>('processing');
+  const [handlerName, setHandlerName] = useState('');
+  const [feedback, setFeedback] = useState('');
 
   const recordId = router.params?.id;
 
@@ -24,6 +35,24 @@ const ReportDetailPage: React.FC = () => {
       urls: record.photos,
       current
     });
+  };
+
+  const openFeedback = () => {
+    setPickStatus(record?.status === 'pending' ? 'processing' : (record?.status as ReportStatus) || 'processing');
+    setHandlerName(record?.handler || '');
+    setFeedback(record?.handleRemark || '');
+    setModalOpen(true);
+  };
+
+  const submitFeedback = () => {
+    if (!record) return;
+    if (!feedback.trim()) {
+      Taro.showToast({ title: '请填写处理意见', icon: 'none' });
+      return;
+    }
+    updateReportStatus(record.id, pickStatus, handlerName.trim() || currentUser.name, feedback.trim());
+    setModalOpen(false);
+    Taro.showToast({ title: '处理反馈已更新', icon: 'success', duration: 1200 });
   };
 
   if (!record) {
@@ -129,7 +158,13 @@ const ReportDetailPage: React.FC = () => {
       )}
 
       <View className={styles.section}>
-        <Text className={styles.sectionTitle}>处理进度</Text>
+        <View className={styles.timelineHeader}>
+          <Text className={styles.sectionTitle}>处理进度</Text>
+          <View className={styles.feedbackBtn} onClick={openFeedback}>
+            <Text className={styles.feedbackIcon}>✎</Text>
+            <Text className={styles.feedbackText}>处理反馈</Text>
+          </View>
+        </View>
         <View className={styles.timeline}>
           <View className={styles.timelineItem}>
             <View className={classnames(styles.timelineDot, styles.done)} />
@@ -148,7 +183,7 @@ const ReportDetailPage: React.FC = () => {
               )} />
               <View className={styles.timelineContent}>
                 <Text className={styles.timelineTitle}>
-                  {record.status === 'processing' ? '正在处理中' : '处理完成'}
+                  {record.status === 'processing' ? '正在处理中' : record.status === 'resolved' ? '已解决' : '已关闭'}
                 </Text>
                 <Text className={styles.timelineHandler}>处理人：{record.handler}</Text>
                 {record.handledAt && (
@@ -172,6 +207,76 @@ const ReportDetailPage: React.FC = () => {
           )}
         </View>
       </View>
+
+      <View style={{ marginTop: '8rpx' }}>
+        <LargeButton
+          text={record.status === 'closed' ? '该上报已关闭' : '更新处理反馈'}
+          type={record.status === 'closed' ? 'secondary' : 'warning'}
+          disabled={record.status === 'closed'}
+          onClick={openFeedback}
+        />
+      </View>
+
+      {modalOpen && (
+        <View className={styles.modalMask} onClick={() => setModalOpen(false)}>
+          <View className={styles.modalBody} onClick={(e) => e.stopPropagation()}>
+            <View className={styles.modalHeader}>
+              <Text className={styles.modalTitle}>MCC 处理反馈</Text>
+              <Text className={styles.modalClose} onClick={() => setModalOpen(false)}>×</Text>
+            </View>
+
+            <Text className={styles.modalLabel}>更新状态</Text>
+            <View className={styles.statusOptions}>
+              {STATUS_OPTIONS.map(opt => (
+                <View
+                  key={opt.key}
+                  className={classnames(
+                    styles.statusOption,
+                    pickStatus === opt.key && styles.statusOptionActive,
+                    pickStatus === opt.key && styles[`s_${opt.key}`]
+                  )}
+                  onClick={() => setPickStatus(opt.key)}
+                >
+                  <Text className={styles.statusOptionLabel}>{opt.label}</Text>
+                  <Text className={styles.statusOptionDesc}>{opt.desc}</Text>
+                </View>
+              ))}
+            </View>
+
+            <Text className={styles.modalLabel}>处理人</Text>
+            <View className={styles.modalInputWrap}>
+              <Textarea
+                className={styles.modalInput}
+                placeholder="处理人姓名/岗位，默认当前用户"
+                placeholderStyle="color:#94A3B8"
+                value={handlerName}
+                onInput={(e) => setHandlerName(e.detail.value)}
+                maxlength={30}
+                autoHeight
+              />
+            </View>
+
+            <Text className={styles.modalLabel}>处理意见 *</Text>
+            <View className={styles.modalTextareaWrap}>
+              <Textarea
+                className={styles.modalTextarea}
+                placeholder="填写处理措施、结论或后续要求..."
+                placeholderStyle="color:#94A3B8"
+                value={feedback}
+                onInput={(e) => setFeedback(e.detail.value)}
+                maxlength={300}
+                showConfirmBar={false}
+              />
+            </View>
+
+            <LargeButton
+              text="提交处理反馈"
+              type="warning"
+              onClick={submitFeedback}
+            />
+          </View>
+        </View>
+      )}
     </View>
   );
 };

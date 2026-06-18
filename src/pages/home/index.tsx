@@ -87,6 +87,10 @@ const HomePage: React.FC = () => {
     Taro.navigateTo({ url: '/pages/history/index' });
   };
 
+  const goShiftSummary = () => {
+    Taro.navigateTo({ url: '/pages/shift-summary/index' });
+  };
+
   const recentHistory = verifyRecords.slice(0, 4);
 
   return (
@@ -134,6 +138,17 @@ const HomePage: React.FC = () => {
             <Text className={styles.actionTitle}>异常上报</Text>
             <Text className={styles.actionDesc}>拍照提交MCC处理</Text>
           </View>
+        </View>
+
+        <View className={styles.shiftEntry} onClick={goShiftSummary}>
+          <View className={styles.shiftIcon}>📋</View>
+          <View className={styles.shiftBody}>
+            <Text className={styles.shiftTitle}>交班汇总</Text>
+            <Text className={styles.shiftDesc}>
+              按飞机号聚合今日核验、异常与处理进度，一键交班
+            </Text>
+          </View>
+          <Text className={styles.shiftArrow}>›</Text>
         </View>
 
         <View className={styles.section}>
